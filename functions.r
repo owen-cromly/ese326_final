@@ -27,6 +27,9 @@ hypothesis_test_mus <- function(samplesA, samplesB, alpha = 0.05) {
     gamma <- (SA/nA + SB/nB)^2 / ((SA/nA)^2/(nA-1) + (SB/nB)^2/(nB-1))
     critical_value <- (XA-XB) / sqrt((SA/nA) + (SB/nB))
     alpha_t <- pt(critical_value, df = gamma, lower.tail = FALSE)
+    print(paste("Critical value:", critical_value))
+    print(paste("Alpha:", alpha_t))
+    print(paste("Alpha level:", alpha))
     if (alpha_t < alpha) {
         print("Reject the null hypothesis")
     } else {
