@@ -1,27 +1,35 @@
-pop_mean_confidence <- function(samples, confidence = 0.95) {
+confidence_interval_mu <- function(samples, confidence = 0.95) {
   # Calculate the mean and standard error of the mean
-  mean_val <- mean(samples)
+  S <- mean(samples)
   se <- sd(samples) / sqrt(length(samples))
-  
   # Calculate the critical value for the given confidence level
   alpha <- 1 - confidence
   critical_value <- qt(1 - alpha / 2, df = length(samples) - 1)
-  
   # Calculate the margin of error
   margin_of_error <- critical_value * se
-  
   # Return the confidence interval
-  return(c(mean_val - margin_of_error, mean_val + margin_of_error))
+  return(c(S - margin_of_error, S + margin_of_error))
 }
 
-hypothesis_test <- function(samplesA, samplesB, alpha = 0.05) {
-    # HYPOTHESIS: POPULATION MEAN OF SAMPLES A IS GREATER THAN POPULATION MEAN OF SAMPLES B
-    # Null Hypothesis (H0): muA <= muB
-    # Alternative Hypothesis (H1): muA > muB
-    # Significance Level: alpha = 0.05
+hypothesis_test_mus <- function(samplesA, samplesB, alpha = 0.05) {
+    # Null Hypothesis: H0: muA <= muB
+    # If we reject the null hypothesis, we conclude that muA > muB
     # Sample Size
     nA <- length(samplesA)
     nB <- length(samplesB)
-    
-    
+    # Sample Mean
+    XA <- mean(samplesA)
+    XB <- mean(samplesB)
+    # Sample Variance
+    SA <- var(samplesA)
+    SB <- var(samplesB)
+    # find alpha for the t-distribution with degrees of freedom gamma and critical value where muA - muB = 0
+    gamma <- (SA/nA + SB/nB)^2 / ((SA/nA)^2/(nA-1) + (SB/nB)^2/(nB-1))
+    critical_value <- (XA-XB) / sqrt((SA/nA) + (SB/nB))
+    alpha_t <- pt(critical_value, df = gamma, lower.tail = FALSE)
+    if (alpha_t < alpha) {
+        print("Reject the null hypothesis")
+    } else {
+        print("Fail to reject the null hypothesis")
+    }
 }
